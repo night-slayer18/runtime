@@ -1,0 +1,36 @@
+# ============================================================================
+# SYNTHETIC FIXTURE — every value below is FAKE and matches only the SHAPE of a
+# provider key, never a real secret. For testing runtime-vault's API-key format
+# detection. See examples/vault/README.md.
+#
+# NOTE: runtime-vault inspects ONE single-line token per run. This file is a
+# reference catalog; to test a specific format, pass a file containing exactly
+# one of these lines (see examples/TESTING.md, "Vault" section).
+# ============================================================================
+
+# AWS Access Key ID         (AKIA|ASIA + 16 upper/digits)
+AKIAIOSFODNN7EXAMPLE0
+
+# GitHub Token              (ghp_ + 36+ alphanumerics)
+ghp_000000000000000000000000000000000000
+
+# GitLab Personal Token     (glpat- + 20+)
+glpat-0000000000000000demo0
+
+# Slack Token               (xoxb- + ...)
+xoxb-0000000000-0000000000-demoFAKEtokenXX
+
+# Stripe Secret Key         (sk_test_ + 16+)
+sk_test_0000000000000000demoFAKE
+
+# Google API Key            (AIza + 35)
+AIzaSyA0000000000000000000000000demo00
+
+# OpenAI API Key            (sk- + 20+)
+sk-demo0000000000000000000000000000
+
+# UUID token
+123e4567-e89b-42d3-a456-426614174000
+
+# Hex token (32+ hex chars)
+0123456789abcdef0123456789abcdef

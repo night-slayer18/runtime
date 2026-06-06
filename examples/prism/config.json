@@ -1,0 +1,39 @@
+{
+  "service": {
+    "name": "runtime-gateway",
+    "version": "2.4.1",
+    "environment": "staging",
+    "listen": {
+      "host": "0.0.0.0",
+      "port": 8443,
+      "tls": true
+    }
+  },
+  "database": {
+    "driver": "postgres",
+    "host": "db.internal.example.com",
+    "port": 5432,
+    "name": "gateway",
+    "pool": {
+      "max_open": 25,
+      "max_idle": 5,
+      "max_lifetime_seconds": 1800
+    },
+    "read_replicas": [
+      "db-ro-1.internal.example.com",
+      "db-ro-2.internal.example.com"
+    ]
+  },
+  "features": {
+    "rate_limiting": true,
+    "tracing": false,
+    "beta_endpoints": ["/v2/search", "/v2/export"]
+  },
+  "limits": {
+    "max_request_bytes": 1048576,
+    "request_timeout_seconds": 30,
+    "retries": 3
+  },
+  "tags": ["edge", "public", "tier-1"],
+  "maintenance_window": null
+}

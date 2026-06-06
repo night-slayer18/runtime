@@ -1,0 +1,13 @@
+id	name	email	department	salary	start_date	active
+1	Ada Lovelace	ada.lovelace@example.com	Engineering	142000	2019-03-11	true
+2	Alan Turing	alan.turing@example.com	Research	155000	2017-06-23	true
+3	Grace Hopper	grace.hopper@example.com	Engineering	138500	2018-01-15	true
+4	Katherine Johnson	katherine.johnson@example.com	Research	131000	2020-09-01	true
+5	Margaret Hamilton	margaret.hamilton@example.com	Engineering	147250	2016-11-30	true
+6	Dennis Ritchie	dennis.ritchie@example.com	Platform	151000	2015-04-19	false
+7	Barbara Liskov	barbara.liskov@example.com	Research	149900	2019-08-05	true
+8	Linus Torvalds	linus.torvalds@example.com	Platform	160000	2014-02-28	true
+9	Radia Perlman	radia.perlman@example.com	Networking	144750	2018-07-12	true
+10	Tim Berners-Lee	tim.bernerslee@example.com	Platform	158300	2013-10-01	false
+11	Donald Knuth	donald.knuth@example.com	Research	162500	2012-05-17	true
+12	Edsger Dijkstra	edsger.dijkstra@example.com	Research	150100	2016-03-22	false

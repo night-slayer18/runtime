@@ -1,0 +1,58 @@
+# Prism TOML sample — exercises datetimes, multiline strings, and arrays of tables.
+
+title = "Runtime Gateway Configuration"
+version = "2.4.1"
+
+# Offset datetime, local date, and local time all decode into Go time types.
+deployed_at = 2024-05-17T09:30:00Z
+release_date = 2024-05-17
+daily_restart = 03:15:00
+
+# Multiline basic string (escapes processed) and multiline literal string (raw).
+banner = """
+Runtime Gateway
+Authorized use only.
+All access is logged.
+"""
+
+regex = '''^/v2/(search|export)/[a-z0-9-]+$'''
+
+[service]
+name = "runtime-gateway"
+environment = "staging"
+tags = ["edge", "public", "tier-1"]
+
+[database]
+driver = "postgres"
+host = "db.internal.example.com"
+port = 5432
+# Array of inline tables.
+pool = { max_open = 25, max_idle = 5, max_lifetime_seconds = 1800 }
+read_replicas = [
+  "db-ro-1.internal.example.com",
+  "db-ro-2.internal.example.com",
+]
+
+# Array of tables: each [[endpoints]] block is one element of the endpoints array.
+[[endpoints]]
+path = "/v2/search"
+methods = ["GET", "POST"]
+auth = "required"
+timeout_seconds = 30
+
+[[endpoints]]
+path = "/v2/export"
+methods = ["GET"]
+auth = "required"
+timeout_seconds = 60
+
+[[endpoints]]
+path = "/healthz"
+methods = ["GET"]
+auth = "none"
+timeout_seconds = 5
+
+[limits]
+max_request_bytes = 1_048_576
+retries = 3
+backoff_multiplier = 1.5

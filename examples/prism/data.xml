@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<catalog generated="2024-05-17" environment="staging">
+  <service id="gateway" tier="1">
+    <name>runtime-gateway</name>
+    <version>2.4.1</version>
+    <endpoints>
+      <endpoint auth="required">
+        <path>/v2/search</path>
+        <method>GET</method>
+        <method>POST</method>
+      </endpoint>
+      <endpoint auth="required">
+        <path>/v2/export</path>
+        <method>GET</method>
+      </endpoint>
+      <endpoint auth="none">
+        <path>/healthz</path>
+        <method>GET</method>
+      </endpoint>
+    </endpoints>
+  </service>
+  <database driver="postgres">
+    <host>db.internal.example.com</host>
+    <port>5432</port>
+    <replicas>
+      <replica>db-ro-1.internal.example.com</replica>
+      <replica>db-ro-2.internal.example.com</replica>
+    </replicas>
+  </database>
+  <flags>
+    <flag name="rate_limiting" enabled="true"/>
+    <flag name="tracing" enabled="false"/>
+  </flags>
+</catalog>

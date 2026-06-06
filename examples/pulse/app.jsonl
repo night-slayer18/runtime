@@ -1,0 +1,16 @@
+{"ts":"2024-05-17T09:00:01Z","level":"info","component":"startup","msg":"booting","service":"runtime-gateway","version":"2.4.1","pid":4821}
+{"ts":"2024-05-17T09:00:02Z","level":"info","component":"db","msg":"pool established","max_open":25,"max_idle":5}
+{"ts":"2024-05-17T09:00:02Z","level":"info","component":"server","msg":"listening","addr":"0.0.0.0:8443","tls":true}
+{"ts":"2024-05-17T09:01:11Z","level":"info","component":"request","method":"GET","path":"/v2/search","status":200,"duration_ms":42}
+{"ts":"2024-05-17T09:01:13Z","level":"warn","component":"ratelimit","msg":"client throttled","client":"10.0.4.18","limit":100}
+{"ts":"2024-05-17T09:01:15Z","level":"error","component":"db","msg":"connection timeout","host":"db.internal.example.com","timeout_ms":5000}
+{"ts":"2024-05-17T09:01:18Z","level":"error","component":"db","msg":"connection timeout","host":"db.internal.example.com","timeout_ms":5000}
+{"ts":"2024-05-17T09:01:31Z","level":"error","component":"upstream","msg":"request failed","target":"inventory-svc","status":503}
+{"ts":"2024-05-17T09:01:38Z","level":"error","component":"upstream","msg":"request failed","target":"inventory-svc","status":503}
+{"ts":"2024-05-17T09:01:44Z","level":"error","component":"auth","msg":"token validation failed","user":8821,"reason":"signature_mismatch"}
+{"ts":"2024-05-17T09:01:52Z","level":"error","component":"auth","msg":"token validation failed","user":9145,"reason":"signature_mismatch"}
+{"ts":"2024-05-17T09:01:55Z","level":"warn","component":"cache","msg":"high miss rate","rate":0.71,"window_s":60}
+{"ts":"2024-05-17T09:02:03Z","level":"info","component":"request","method":"POST","path":"/v2/export","status":202,"duration_ms":92}
+{"ts":"2024-05-17T09:02:09Z","level":"debug","component":"gc","msg":"pause","pause_ms":1.8,"heap_mb":128}
+{"ts":"2024-05-17T09:02:25Z","level":"info","component":"shutdown","msg":"SIGTERM received, draining"}
+{"ts":"2024-05-17T09:02:26Z","level":"info","component":"shutdown","msg":"stopped cleanly"}

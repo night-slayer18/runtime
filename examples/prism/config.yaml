@@ -1,0 +1,59 @@
+# Prism YAML sample — exercises anchors/aliases and block scalars.
+# Anchors define reusable defaults; aliases (*name) merge or reference them.
+
+defaults: &default_resources
+  cpu: "500m"
+  memory: "512Mi"
+  replicas: 2
+
+probes: &default_probes
+  liveness:
+    path: /healthz
+    period_seconds: 10
+  readiness:
+    path: /ready
+    period_seconds: 5
+
+service:
+  name: runtime-gateway
+  version: 2.4.1
+  environment: staging
+
+deployments:
+  api:
+    # Merge the shared defaults, then override one field.
+    <<: *default_resources
+    replicas: 4
+    probes: *default_probes
+  worker:
+    <<: *default_resources
+    probes: *default_probes
+
+# Literal block scalar (|) preserves newlines.
+banner: |
+  Runtime Gateway
+  ================
+  Authorized use only.
+  All access is logged.
+
+# Folded block scalar (>) joins lines into a single paragraph.
+description: >
+  This gateway fronts the public API tier. It performs TLS termination,
+  rate limiting, and request routing to the internal services. Configuration
+  is reloaded on SIGHUP without dropping in-flight connections.
+
+endpoints:
+  - path: /v2/search
+    methods: [GET, POST]
+    auth: required
+  - path: /v2/export
+    methods: [GET]
+    auth: required
+  - path: /healthz
+    methods: [GET]
+    auth: none
+
+flags:
+  rate_limiting: true
+  tracing: false
+  maintenance_window: null
