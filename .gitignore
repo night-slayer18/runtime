@@ -1,0 +1,54 @@
+# Build output
+/bin/
+dist/
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test & coverage artifacts
+*.test
+*.out
+coverage.txt
+coverage.html
+*.prof
+
+# Go workspace local overrides (keep go.work; ignore the local sum)
+go.work.sum
+
+# Dependency vendoring (modules are proxied, not vendored)
+/vendor/
+**/vendor/
+
+# Editor / IDE
+.idea/
+*.swp
+*.swo
+*~
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+
+# OS cruft
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Logs & temp
+*.log
+*.tmp
+tmp/
+.netprobe/
+.verprobe/
+# ...but keep the committed log fixtures used for testing Pulse
+!examples/pulse/*.log
+
+# Local environment / secrets (Vault test fixtures must be synthetic, never real)
+.env
+.env.local
+*.local.env

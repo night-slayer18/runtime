@@ -1,0 +1,21 @@
+go 1.25.0
+
+use (
+	./apps/grid
+	./apps/prism
+	./apps/pulse
+	./apps/strata
+	./apps/vault
+	./examples/_generators
+	./packages/config
+	./packages/datasource
+	./packages/export
+	./packages/plugin
+	./packages/schema
+	./packages/search
+	./packages/table
+	./packages/theme
+	./packages/tree
+	./packages/tui
+	./packages/validation
+)
