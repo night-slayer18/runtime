@@ -59,7 +59,9 @@ func scanAll(t *testing.T, source ds.DataSource) ([]string, [][]string) {
 func TestOpenCSV(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "d.csv")
-	os.WriteFile(path, []byte("a,b\n1,2\n3,4\n"), 0o600)
+	if err := os.WriteFile(path, []byte("a,b\n1,2\n3,4\n"), 0o600); err != nil {
+		t.Fatalf("write csv: %v", err)
+	}
 
 	source, err := gridds.Open(path)
 	if err != nil {
@@ -78,7 +80,9 @@ func TestOpenCSV(t *testing.T) {
 func TestOpenTSV(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "d.tsv")
-	os.WriteFile(path, []byte("x\ty\n10\t20\n"), 0o600)
+	if err := os.WriteFile(path, []byte("x\ty\n10\t20\n"), 0o600); err != nil {
+		t.Fatalf("write tsv: %v", err)
+	}
 
 	source, err := gridds.Open(path)
 	if err != nil {
@@ -135,7 +139,9 @@ func TestOpenXLSX_RoundTrip(t *testing.T) {
 func TestOpenParquetGarbageFails(t *testing.T) {
 	dir := t.TempDir()
 	path := filepath.Join(dir, "d.parquet")
-	os.WriteFile(path, []byte("not really parquet"), 0o600)
+	if err := os.WriteFile(path, []byte("not really parquet"), 0o600); err != nil {
+		t.Fatalf("write parquet: %v", err)
+	}
 
 	if _, err := gridds.Open(path); err == nil {
 		t.Fatal("expected garbage Parquet open to fail")
@@ -219,7 +225,7 @@ func TestOpenArrow_RoundTrip(t *testing.T) {
 	nameB.Append("Ada")
 	nameB.AppendNull()
 	nameB.Append("Grace")
-	rec := b.NewRecord()
+	rec := b.NewRecordBatch()
 	defer rec.Release()
 
 	f, err := os.Create(path)

@@ -54,11 +54,8 @@ func TestParseJSON(t *testing.T) {
 	}
 
 	name := childByTitlePrefix(root, "name:")
-	if name == nil {
-		t.Fatal("missing name node")
-	}
-	if name.Data != "prism" {
-		t.Errorf("name = %v, want prism", name.Data)
+	if name == nil || name.Data != "prism" {
+		t.Fatalf("name = %+v, want prism", name)
 	}
 
 	tags := childByTitlePrefix(root, "tags")
@@ -275,19 +272,13 @@ func TestParseYAMLBlockScalars(t *testing.T) {
 	}
 
 	lit := childByTitlePrefix(root, "literal:")
-	if lit == nil {
-		t.Fatal("missing literal node")
-	}
-	if lit.Data != "line one\nline two\n" {
-		t.Errorf("literal = %q, want %q", lit.Data, "line one\nline two\n")
+	if lit == nil || lit.Data != "line one\nline two\n" {
+		t.Fatalf("literal = %+v, want %q", lit, "line one\nline two\n")
 	}
 
 	folded := childByTitlePrefix(root, "folded:")
-	if folded == nil {
-		t.Fatal("missing folded node")
-	}
-	if folded.Data != "folded line one folded line two\n" {
-		t.Errorf("folded = %q, want %q", folded.Data, "folded line one folded line two\n")
+	if folded == nil || folded.Data != "folded line one folded line two\n" {
+		t.Fatalf("folded = %+v, want %q", folded, "folded line one folded line two\n")
 	}
 }
 
@@ -302,20 +293,14 @@ func TestParseTOMLMultilineStrings(t *testing.T) {
 	}
 
 	basic := childByTitlePrefix(root, "basic:")
-	if basic == nil {
-		t.Fatal("missing basic node")
-	}
-	if basic.Data != "first line\nsecond line\n" {
-		t.Errorf("basic = %q, want %q", basic.Data, "first line\nsecond line\n")
+	if basic == nil || basic.Data != "first line\nsecond line\n" {
+		t.Fatalf("basic = %+v, want %q", basic, "first line\nsecond line\n")
 	}
 
 	literal := childByTitlePrefix(root, "literal:")
-	if literal == nil {
-		t.Fatal("missing literal node")
-	}
 	// In a literal string the backslash sequence is preserved verbatim.
-	if literal.Data != "raw\\nno-escape\n" {
-		t.Errorf("literal = %q, want %q", literal.Data, "raw\\nno-escape\n")
+	if literal == nil || literal.Data != "raw\\nno-escape\n" {
+		t.Fatalf("literal = %+v, want %q", literal, "raw\\nno-escape\n")
 	}
 }
 
@@ -330,12 +315,10 @@ func TestParseTOMLDatetimes(t *testing.T) {
 	}
 	created := childByTitlePrefix(root, "created:")
 	if created == nil {
-		t.Fatal("missing created node")
-	}
-	if _, ok := created.Data.(time.Time); !ok {
+		t.Fatalf("missing created node")
+	} else if _, ok := created.Data.(time.Time); !ok {
 		t.Fatalf("created Data = %T, want time.Time", created.Data)
-	}
-	if got := scalarString(created.Data); got != "1979-05-27T07:32:00Z" {
+	} else if got := scalarString(created.Data); got != "1979-05-27T07:32:00Z" {
 		t.Errorf("created rendered = %q, want %q", got, "1979-05-27T07:32:00Z")
 	}
 }
@@ -358,11 +341,8 @@ func TestParseTOMLNumericGrammar(t *testing.T) {
 	}
 	for prefix, want := range cases {
 		n := childByTitlePrefix(root, prefix)
-		if n == nil {
-			t.Fatalf("missing %s node", prefix)
-		}
-		if n.Data != want {
-			t.Errorf("%s = %v (%T), want %d", prefix, n.Data, n.Data, want)
+		if n == nil || n.Data != want {
+			t.Errorf("%s = %+v, want %d", prefix, n, want)
 		}
 	}
 }

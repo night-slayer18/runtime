@@ -122,7 +122,7 @@ func writeArrow(path string, rows []Person) error {
 		b.Field(6).(*array.BooleanBuilder).Append(p.Active)
 	}
 
-	rec := b.NewRecord()
+	rec := b.NewRecordBatch()
 	defer rec.Release()
 
 	f, err := os.Create(path)

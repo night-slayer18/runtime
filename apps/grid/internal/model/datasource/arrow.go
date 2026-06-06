@@ -49,7 +49,7 @@ func readArrow(path string) (ds.DataSource, error) {
 
 	var rows [][]string
 	for i := 0; i < r.NumRecords(); i++ {
-		rec, err := r.Record(i)
+		rec, err := r.RecordBatch(i)
 		if err != nil {
 			return nil, fmt.Errorf("read arrow record %d: %w", i, err)
 		}
@@ -63,7 +63,7 @@ func readArrow(path string) (ds.DataSource, error) {
 // row-major order. Each column array's value at row index r is rendered with
 // ValueStr; nulls map to the empty string. Missing columns are left as the
 // empty string so every row matches the schema width.
-func arrowRecordToStrings(rec arrow.Record, colCount int) [][]string {
+func arrowRecordToStrings(rec arrow.RecordBatch, colCount int) [][]string {
 	nRows := int(rec.NumRows())
 	nCols := int(rec.NumCols())
 	out := make([][]string, nRows)
