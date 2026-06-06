@@ -1,0 +1,132 @@
+version: 2
+
+# Keep Go modules and GitHub Actions up to date. Each Go module has its own
+# go.mod, so each gets its own gomod entry (a directory glob would also work,
+# but explicit entries make per-module grouping/limits clear). Weekly schedule.
+updates:
+  # ---- Applications ----
+  - package-ecosystem: gomod
+    directory: /apps/grid
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(grid)"
+
+  - package-ecosystem: gomod
+    directory: /apps/prism
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(prism)"
+
+  - package-ecosystem: gomod
+    directory: /apps/pulse
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(pulse)"
+
+  - package-ecosystem: gomod
+    directory: /apps/strata
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(strata)"
+
+  - package-ecosystem: gomod
+    directory: /apps/vault
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "deps(vault)"
+
+  # ---- Shared packages ----
+  - package-ecosystem: gomod
+    directory: /packages/tui
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(tui)"
+
+  - package-ecosystem: gomod
+    directory: /packages/theme
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(theme)"
+
+  - package-ecosystem: gomod
+    directory: /packages/config
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(config)"
+
+  - package-ecosystem: gomod
+    directory: /packages/table
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(table)"
+
+  - package-ecosystem: gomod
+    directory: /packages/tree
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(tree)"
+
+  - package-ecosystem: gomod
+    directory: /packages/search
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(search)"
+
+  - package-ecosystem: gomod
+    directory: /packages/plugin
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(plugin)"
+
+  - package-ecosystem: gomod
+    directory: /packages/datasource
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(datasource)"
+
+  - package-ecosystem: gomod
+    directory: /packages/export
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(export)"
+
+  - package-ecosystem: gomod
+    directory: /packages/schema
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(schema)"
+
+  - package-ecosystem: gomod
+    directory: /packages/validation
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(validation)"
+
+  # ---- GitHub Actions used by the workflows ----
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "ci"

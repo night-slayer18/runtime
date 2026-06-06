@@ -1,0 +1,207 @@
+name: Release
+
+# Independent, per-module releases triggered by tag pushes.
+#
+# Tag conventions (see scripts/version.sh and design.md):
+#   - App release:     <app>/vX.Y.Z            e.g. grid/v1.2.3
+#   - Package release: packages/<pkg>/vX.Y.Z   e.g. packages/theme/v0.2.0
+#
+# An APP tag cross-compiles that one app for all 6 OS/arch combos, packages and
+# checksums the binaries, and publishes a GitHub Release. A PACKAGE tag creates
+# a library release with no binaries. Releases are fully independent: one app's
+# release never depends on another module.
+on:
+  push:
+    tags:
+      - "*/v*"           # app tags: grid/v1.2.3 (single path segment)
+      - "packages/*/v*"  # package tags: packages/theme/v0.2.0
+
+permissions:
+  contents: write
+
+env:
+  GO_VERSION: "1.25.x"
+
+jobs:
+  # Parse the pushed tag into kind (app|package), module name, and version.
+  parse:
+    name: Parse tag
+    runs-on: ubuntu-latest
+    outputs:
+      kind: ${{ steps.parse.outputs.kind }}
+      app: ${{ steps.parse.outputs.app }}
+      module: ${{ steps.parse.outputs.module }}
+      version: ${{ steps.parse.outputs.version }}
+    steps:
+      - id: parse
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          echo "Parsing tag: ${TAG}"
+          if [[ "${TAG}" =~ ^packages/([a-z0-9_-]+)/(v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            pkg="${BASH_REMATCH[1]}"
+            ver="${BASH_REMATCH[2]}"
+            echo "kind=package" >> "$GITHUB_OUTPUT"
+            echo "module=packages/${pkg}" >> "$GITHUB_OUTPUT"
+            echo "version=${ver}" >> "$GITHUB_OUTPUT"
+            echo "Detected PACKAGE release: packages/${pkg} ${ver}"
+          elif [[ "${TAG}" =~ ^(grid|prism|pulse|strata|vault)/(v[0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            app="${BASH_REMATCH[1]}"
+            ver="${BASH_REMATCH[2]}"
+            echo "kind=app" >> "$GITHUB_OUTPUT"
+            echo "app=${app}" >> "$GITHUB_OUTPUT"
+            echo "module=apps/${app}" >> "$GITHUB_OUTPUT"
+            echo "version=${ver}" >> "$GITHUB_OUTPUT"
+            echo "Detected APP release: ${app} ${ver}"
+          else
+            echo "::error::Tag '${TAG}' does not match a known release convention (<app>/vX.Y.Z or packages/<pkg>/vX.Y.Z)"
+            exit 1
+          fi
+
+  # Reuse the cross-platform build matrix for the single app being released.
+  build:
+    name: Build binaries
+    needs: parse
+    if: needs.parse.outputs.kind == 'app'
+    uses: ./.github/workflows/build.yml
+    with:
+      apps: ${{ format('["{0}"]', needs.parse.outputs.app) }}
+      version: ${{ needs.parse.outputs.version }}
+
+  # Package binaries, generate checksums + changelog, and publish the release.
+  release-app:
+    name: Release app
+    needs: [parse, build]
+    if: needs.parse.outputs.kind == 'app'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # full history so the changelog can diff prior tags
+
+      - name: Download built binaries
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          pattern: runtime-${{ needs.parse.outputs.app }}-*
+          merge-multiple: true
+
+      - name: Package binaries
+        id: package
+        env:
+          APP: ${{ needs.parse.outputs.app }}
+          VERSION: ${{ needs.parse.outputs.version }}
+        run: |
+          set -euo pipefail
+          mkdir -p dist
+          shopt -s nullglob
+          for bin in artifacts/runtime-${APP}-*; do
+            name="$(basename "${bin}")"
+            chmod +x "${bin}" || true
+            if [[ "${name}" == *.exe ]]; then
+              # windows -> zip (strip .exe to derive the archive base name)
+              base="${name%.exe}"
+              archive="dist/${base}.zip"
+              tmp="$(mktemp -d)"
+              cp "${bin}" "${tmp}/${name}"
+              (cd "${tmp}" && zip -q "$OLDPWD/${archive}" "${name}")
+              rm -rf "${tmp}"
+            else
+              # unix -> tar.gz
+              archive="dist/${name}.tar.gz"
+              tmp="$(mktemp -d)"
+              cp "${bin}" "${tmp}/${name}"
+              tar -czf "${archive}" -C "${tmp}" "${name}"
+              rm -rf "${tmp}"
+            fi
+            echo "packaged ${archive}"
+          done
+
+      - name: Generate checksums
+        working-directory: dist
+        run: |
+          set -euo pipefail
+          sha256sum * > "SHA256SUMS.txt"
+          cat "SHA256SUMS.txt"
+
+      - name: Generate changelog
+        id: changelog
+        env:
+          TAG: ${{ github.ref_name }}
+          MODULE: ${{ needs.parse.outputs.module }}
+          APP: ${{ needs.parse.outputs.app }}
+        run: |
+          set -euo pipefail
+          # Find the previous tag for THIS app (same <app>/v* prefix), if any.
+          prev="$(git tag --list "${APP}/v*" --sort=-version:refname | grep -v "^${TAG}$" | head -n1 || true)"
+          {
+            echo "## ${APP} ${TAG#${APP}/}"
+            echo
+            if [ -n "${prev}" ]; then
+              echo "Changes since ${prev}:"
+              echo
+              git log --no-merges --pretty=format:'- %s (%h)' "${prev}..${TAG}" -- "${MODULE}" || true
+            else
+              echo "Initial release."
+              echo
+              git log --no-merges --pretty=format:'- %s (%h)' "${TAG}" -- "${MODULE}" | head -n 50 || true
+            fi
+            echo
+          } > CHANGELOG.md
+          echo "Generated changelog:"
+          cat CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ needs.parse.outputs.app }} ${{ needs.parse.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          body_path: CHANGELOG.md
+          files: |
+            dist/*.tar.gz
+            dist/*.zip
+            dist/SHA256SUMS.txt
+          fail_on_unmatched_files: true
+
+  # Library (package) release: tagged GitHub Release with no binaries.
+  release-package:
+    name: Release package
+    needs: parse
+    if: needs.parse.outputs.kind == 'package'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Generate changelog
+        env:
+          TAG: ${{ github.ref_name }}
+          MODULE: ${{ needs.parse.outputs.module }}
+        run: |
+          set -euo pipefail
+          # Previous tag for this package path (packages/<pkg>/v*).
+          prev="$(git tag --list "${MODULE}/v*" --sort=-version:refname | grep -v "^${TAG}$" | head -n1 || true)"
+          {
+            echo "## ${TAG}"
+            echo
+            echo "Library release for \`${MODULE}\`."
+            echo
+            if [ -n "${prev}" ]; then
+              echo "Changes since ${prev}:"
+              echo
+              git log --no-merges --pretty=format:'- %s (%h)' "${prev}..${TAG}" -- "${MODULE}" || true
+            else
+              echo "Initial release."
+            fi
+            echo
+          } > CHANGELOG.md
+          cat CHANGELOG.md
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ needs.parse.outputs.module }} ${{ needs.parse.outputs.version }}
+          tag_name: ${{ github.ref_name }}
+          body_path: CHANGELOG.md

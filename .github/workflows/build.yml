@@ -1,0 +1,86 @@
+name: Build
+
+# Reusable cross-platform build matrix. Builds every app binary statically
+# (CGO_ENABLED=0, -trimpath) for all 6 OS/arch combos and uploads them as
+# workflow artifacts. Callable from other workflows via workflow_call (used by
+# release.yml) and runnable on demand via workflow_dispatch.
+on:
+  workflow_call:
+    inputs:
+      apps:
+        description: "JSON array of apps to build (default: all five)."
+        type: string
+        required: false
+        default: '["grid","prism","pulse","strata","vault"]'
+      version:
+        description: "Version string stamped into the binary (e.g. v1.2.3 or dev)."
+        type: string
+        required: false
+        default: "dev"
+  workflow_dispatch:
+    inputs:
+      apps:
+        description: "JSON array of apps to build."
+        type: string
+        required: false
+        default: '["grid","prism","pulse","strata","vault"]'
+      version:
+        description: "Version string stamped into the binary."
+        type: string
+        required: false
+        default: "dev"
+
+permissions:
+  contents: read
+
+env:
+  GO_VERSION: "1.25.x"
+  CGO_ENABLED: "0"
+
+jobs:
+  build:
+    name: ${{ matrix.app }}-${{ matrix.goos }}-${{ matrix.goarch }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        app: ${{ fromJSON(inputs.apps) }}
+        goos: [linux, darwin, windows]
+        goarch: [amd64, arm64]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v5
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      - name: Resolve binary name
+        id: name
+        run: |
+          set -euo pipefail
+          ext=""
+          if [ "${{ matrix.goos }}" = "windows" ]; then ext=".exe"; fi
+          base="runtime-${{ matrix.app }}-${{ matrix.goos }}-${{ matrix.goarch }}"
+          echo "binary=${base}${ext}" >> "$GITHUB_OUTPUT"
+
+      - name: Build ${{ matrix.app }}
+        working-directory: apps/${{ matrix.app }}
+        env:
+          GOOS: ${{ matrix.goos }}
+          GOARCH: ${{ matrix.goarch }}
+        run: |
+          set -euo pipefail
+          version="${{ inputs.version }}"
+          go build \
+            -trimpath \
+            -ldflags "-s -w -X main.version=${version}" \
+            -o "../../dist/${{ steps.name.outputs.binary }}" \
+            ./cmd/${{ matrix.app }}
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.name.outputs.binary }}
+          path: dist/${{ steps.name.outputs.binary }}
+          if-no-files-found: error
+          retention-days: 7
