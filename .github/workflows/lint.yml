@@ -71,7 +71,10 @@ jobs:
       - name: golangci-lint
         uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          # Pinned to the 1.x line (validated locally). golangci-lint-action@v6
+          # targets golangci-lint v1; "latest" now resolves to v2.x, which uses
+          # an incompatible config format and stricter defaults.
+          version: v1.64.8
           working-directory: ${{ matrix.module }}
           args: --timeout=5m
 
