@@ -57,6 +57,17 @@ func (p *countingProvider) reset() {
 func TestProperty4_PerformanceWithLargeDatasets(t *testing.T) {
 	rng := rand.New(rand.NewSource(0xF00DCAFE))
 
+	// The design budget is 100ms per Navigate+View. Under the race detector the
+	// elapsed time measures instrumented execution, not real performance, so we
+	// scale the budget by 10x (race overhead is well within that). The default
+	// `make test` run keeps the strict 100ms target. The deterministic
+	// bounded-work invariant below is what actually proves O(viewport) behavior
+	// and stays strict regardless of the race detector.
+	timeBudget := 100 * time.Millisecond
+	if raceEnabled {
+		timeBudget *= 10
+	}
+
 	for iter := 0; iter < perfIterations; iter++ {
 		// N is always at least 1,000,000; vary it so the property holds across
 		// a range of very large datasets, not a single magic size. Generation
@@ -98,10 +109,11 @@ func TestProperty4_PerformanceWithLargeDatasets(t *testing.T) {
 			_ = tbl.View()
 			elapsed := time.Since(start)
 
-			// Bound 1: response time. The design budget is 100ms per operation.
-			if elapsed > 100*time.Millisecond {
-				t.Fatalf("iter %d step %d: Navigate(%q)+View took %v on N=%d, exceeds 100ms budget",
-					iter, step, key, elapsed, n)
+			// Bound 1: response time. The design budget is 100ms per operation
+			// (scaled under the race detector; see timeBudget above).
+			if elapsed > timeBudget {
+				t.Fatalf("iter %d step %d: Navigate(%q)+View took %v on N=%d, exceeds %v budget (raceEnabled=%v)",
+					iter, step, key, elapsed, n, timeBudget, raceEnabled)
 			}
 
 			// Bound 2: bounded work. A single render must touch only the
