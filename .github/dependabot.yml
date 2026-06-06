@@ -1,8 +1,9 @@
 version: 2
 
 # Keep Go modules and GitHub Actions up to date. Each Go module has its own
-# go.mod, so each gets its own gomod entry (a directory glob would also work,
-# but explicit entries make per-module grouping/limits clear). Weekly schedule.
+# go.mod, so each gets its own gomod entry. Each entry groups its updates into
+# a single PR per module (minor/patch together) so a weekly run produces a
+# handful of reviewable PRs rather than one per dependency across 17 modules.
 updates:
   # ---- Applications ----
   - package-ecosystem: gomod
@@ -12,6 +13,9 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps(grid)"
+    groups:
+      grid:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/prism
@@ -20,6 +24,9 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps(prism)"
+    groups:
+      prism:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/pulse
@@ -28,6 +35,9 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps(pulse)"
+    groups:
+      pulse:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/strata
@@ -36,6 +46,9 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps(strata)"
+    groups:
+      strata:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/vault
@@ -44,6 +57,9 @@ updates:
     open-pull-requests-limit: 5
     commit-message:
       prefix: "deps(vault)"
+    groups:
+      vault:
+        patterns: ["*"]
 
   # ---- Shared packages ----
   - package-ecosystem: gomod
@@ -52,6 +68,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(tui)"
+    groups:
+      tui:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/theme
@@ -59,6 +78,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(theme)"
+    groups:
+      theme:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/config
@@ -66,6 +88,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(config)"
+    groups:
+      config:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/table
@@ -73,6 +98,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(table)"
+    groups:
+      table:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/tree
@@ -80,6 +108,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(tree)"
+    groups:
+      tree:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/search
@@ -87,6 +118,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(search)"
+    groups:
+      search:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/plugin
@@ -94,6 +128,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(plugin)"
+    groups:
+      plugin:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/datasource
@@ -101,6 +138,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(datasource)"
+    groups:
+      datasource:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/export
@@ -108,6 +148,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(export)"
+    groups:
+      export:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/schema
@@ -115,6 +158,9 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(schema)"
+    groups:
+      schema:
+        patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/validation
@@ -122,6 +168,20 @@ updates:
       interval: weekly
     commit-message:
       prefix: "deps(validation)"
+    groups:
+      validation:
+        patterns: ["*"]
+
+  # ---- Example data generators (own module, also in go.work) ----
+  - package-ecosystem: gomod
+    directory: /examples/_generators
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: "deps(examples)"
+    groups:
+      examples:
+        patterns: ["*"]
 
   # ---- GitHub Actions used by the workflows ----
   - package-ecosystem: github-actions
@@ -130,3 +190,6 @@ updates:
       interval: weekly
     commit-message:
       prefix: "ci"
+    groups:
+      actions:
+        patterns: ["*"]

@@ -11,7 +11,8 @@ All jobs pin Go `1.25.x` to match the modules' `go 1.25.0` directive.
 |------|---------|---------|
 | `ci.yml` | push to `main`, pull_request | Dynamically discovers all module dirs and runs `go build ./...` + `go test -race ./...` per module in a `fail-fast: false` matrix (so each module reports independently — Requirement 11.2), plus a `build-smoke` job running `scripts/build-smoke.sh`. Caches the Go build/module cache. |
 | `lint.yml` | push to `main`, pull_request | `golangci-lint` per module via the official action, a repo-wide `gofmt -l` gate that fails on any unformatted file, and `go vet ./...` per module. |
-| `security.yml` | push, pull_request, weekly cron (Mon 06:00 UTC) | `govulncheck ./...` per module, `go mod verify` per module, and CodeQL static analysis for Go. |
+| `security.yml` | push, pull_request, weekly cron (Mon 06:00 UTC) | `govulncheck ./...` per module (run on the latest patched Go so toolchain-only stdlib CVEs are not un-actionable) and `go mod verify` per module. |
+| `codeql.yml` | push to `main`, PR, weekly cron (Mon 06:30 UTC) | CodeQL static analysis for Go using `build-mode: none` (source analysis, no build tracing — robust for the multi-module `go.work` layout). |
 | `build.yml` | `workflow_call`, `workflow_dispatch` | Reusable cross-platform build matrix (GOOS linux/darwin/windows × GOARCH amd64/arm64) building each app with `CGO_ENABLED=0 -trimpath` and uploading binaries as artifacts. Reused by `release.yml`. |
 | `release.yml` | tag push (see below) | Parses the tag to determine app vs package release, then either cross-compiles + packages + checksums + publishes an app release, or publishes a binary-free library release. |
 
@@ -34,5 +35,7 @@ header for the bump/coordinated-release options).
 ## Dependabot
 
 `.github/dependabot.yml` keeps every Go module (`gomod`, one entry per module
-directory) and the GitHub Actions (`github-actions`) up to date on a weekly
-schedule.
+directory — all 5 apps, 11 packages, and `examples/_generators`) and the
+GitHub Actions (`github-actions`) up to date weekly. Each entry groups its
+updates into a single PR per module so a weekly run yields a handful of
+reviewable PRs rather than one per dependency.
