@@ -25,6 +25,10 @@ type Root struct {
 	size     tui.Size
 	showHelp bool
 
+	// searching reports whether the query input line is active.
+	searching bool
+	// queryInput holds the in-progress query while searching.
+	queryInput string
 	// conn is the connection string supplied on the command line, if any. It is
 	// resolved to a backend + DSN and connected on Init.
 	conn string
@@ -87,15 +91,60 @@ func (r Root) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		r.connect(msg.conn)
 		return r, nil
 	case tea.KeyMsg:
-		switch r.keys.Dispatch(msg) {
-		case tui.ActionQuit:
-			return r, tea.Quit
-		case tui.ActionHelp:
-			r.showHelp = !r.showHelp
-		case tui.ActionUp, tui.ActionDown, tui.ActionLeft, tui.ActionRight,
-			tui.ActionPageUp, tui.ActionPageDown, tui.ActionTop, tui.ActionBottom:
-			r.state.Table.Navigate(msg.String())
+		return r.handleKey(msg)
+	}
+	return r, nil
+}
+
+// handleKey routes key presses either to the query input line or to standard navigation.
+func (r Root) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	if r.searching {
+		return r.handleSearchKey(msg)
+	}
+
+	switch r.keys.Dispatch(msg) {
+	case tui.ActionQuit:
+		return r, tea.Quit
+	case tui.ActionHelp:
+		r.showHelp = !r.showHelp
+	case tui.ActionSearch:
+		r.searching = true
+		// Pre-populate input with current query if any
+		r.queryInput = ""
+	case tui.ActionUp, tui.ActionDown, tui.ActionLeft, tui.ActionRight,
+		tui.ActionPageUp, tui.ActionPageDown, tui.ActionTop, tui.ActionBottom:
+		r.state.Table.Navigate(msg.String())
+	}
+	return r, nil
+}
+
+// handleSearchKey handles character input and executes or cancels queries.
+func (r Root) handleSearchKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
+	switch msg.Type {
+	case tea.KeyEnter:
+		r.searching = false
+		if r.queryInput != "" {
+			r.state.SetSchemaQuery(r.queryInput)
+			if _, err := r.state.ReadSchema(); err != nil {
+				r.status = fmt.Sprintf("schema error: %v", err)
+				return r, nil
+			}
+			n, err := r.state.RunQuery(r.queryInput)
+			if err != nil {
+				r.status = fmt.Sprintf("query error: %v", err)
+				return r, nil
+			}
+			r.status = fmt.Sprintf("loaded %d rows", n)
 		}
+	case tea.KeyEsc:
+		r.searching = false
+		r.queryInput = ""
+	case tea.KeyBackspace:
+		if len(r.queryInput) > 0 {
+			r.queryInput = r.queryInput[:len(r.queryInput)-1]
+		}
+	case tea.KeyRunes, tea.KeySpace:
+		r.queryInput += string(msg.Runes)
 	}
 	return r, nil
 }
@@ -115,7 +164,9 @@ func (r Root) View() string {
 	}
 
 	var footer string
-	if r.showHelp {
+	if r.searching {
+		footer = r.styles.Footer.Width(r.size.Width).Render("Query: " + r.queryInput + "▏")
+	} else if r.showHelp {
 		footer = r.styles.Footer.Width(r.size.Width).Render(r.help.View(r.keys))
 	} else {
 		hints := r.help.ShortHelpView(r.keys.ShortHelp())
@@ -143,10 +194,17 @@ func (r *Root) connect(conn string) {
 		r.status = fmt.Sprintf("connect %s: %v", backend, err)
 		return
 	}
-	// For SQL backends, derive the schema from the connected database/table the
-	// user is exploring. When the source exposes fixed metadata this is a no-op.
+	// For SQL/NoSQL backends, derive the schema from the connected database/table the
+	// user is exploring. Ignore initial lack of query/collection errors.
 	if _, err := r.state.ReadSchema(); err != nil {
-		r.status = err.Error()
+		errMsg := err.Error()
+		if strings.Contains(errMsg, "no schema query configured") ||
+			strings.Contains(errMsg, "no collection configured") ||
+			strings.Contains(errMsg, "no table configured") {
+			r.status = fmt.Sprintf("connected to %s", backend)
+			return
+		}
+		r.status = errMsg
 		return
 	}
 	r.status = fmt.Sprintf("connected to %s", backend)

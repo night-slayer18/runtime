@@ -34,6 +34,31 @@ func TestNormalizeCollapsesWhitespace(t *testing.T) {
 	}
 }
 
+func TestNormalizeReplacesTimestamp(t *testing.T) {
+	cases := []struct {
+		in   string
+		want string
+	}{
+		{"2024-05-17 09:00:01 INFO log message", "<TIMESTAMP> INFO log message"},
+		{"time=2024-05-17T09:00:01Z level=info", "time=<TIMESTAMP> level=info"},
+		{"time=2024-05-17T09:00:01.123456Z level=info", "time=<TIMESTAMP> level=info"},
+		{"time=2024-05-17T09:00:01+05:30 level=info", "time=<TIMESTAMP> level=info"},
+	}
+	for _, tc := range cases {
+		if got := Normalize(tc.in); got != tc.want {
+			t.Errorf("Normalize(%q) = %q, want %q", tc.in, got, tc.want)
+		}
+	}
+}
+
+func TestNormalizeReplacesIP(t *testing.T) {
+	got := Normalize("client 10.0.4.18 exceeded limit")
+	want := "client <IP> exceeded limit"
+	if got != want {
+		t.Fatalf("got %q want %q", got, want)
+	}
+}
+
 func TestGroupSimilarCollapsesByTemplate(t *testing.T) {
 	in := entries(
 		"connection failed for user 1",

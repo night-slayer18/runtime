@@ -11,18 +11,22 @@ import (
 // more specific patterns (UUIDs, hex) must run before the generic number
 // pattern would otherwise partially rewrite them.
 var (
-	reUUID   = regexp.MustCompile(`(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b`)
-	reHex    = regexp.MustCompile(`(?i)\b0x[0-9a-f]+\b|\b[0-9a-f]{8,}\b`)
-	reNumber = regexp.MustCompile(`\b\d+(\.\d+)?\b`)
-	reSpaces = regexp.MustCompile(`\s+`)
+	reUUID      = regexp.MustCompile(`(?i)\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b`)
+	reTimestamp = regexp.MustCompile(`\b\d{4}-\d{2}-\d{2}[T ]\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:?\d{2})?\b`)
+	reIP        = regexp.MustCompile(`\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b`)
+	reHex       = regexp.MustCompile(`(?i)\b0x[0-9a-f]+\b|\b[0-9a-f]{8,}\b`)
+	reNumber    = regexp.MustCompile(`\b\d+(\.\d+)?\b`)
+	reSpaces    = regexp.MustCompile(`\s+`)
 )
 
-// Normalize collapses the variable parts of a log line — UUIDs, hex strings,
-// and numeric literals — into fixed placeholder tokens and squeezes runs of
-// whitespace. Two log lines that differ only in those variable parts normalize
-// to the same template, which is the basis for grouping similar errors.
+// Normalize collapses the variable parts of a log line — UUIDs, timestamps,
+// IP addresses, hex strings, and numeric literals — into fixed placeholder tokens
+// and squeezes runs of whitespace. Two log lines that differ only in those variable
+// parts normalize to the same template, which is the basis for grouping similar errors.
 func Normalize(line string) string {
 	s := reUUID.ReplaceAllString(line, "<UUID>")
+	s = reTimestamp.ReplaceAllString(s, "<TIMESTAMP>")
+	s = reIP.ReplaceAllString(s, "<IP>")
 	s = reHex.ReplaceAllString(s, "<HEX>")
 	s = reNumber.ReplaceAllString(s, "<NUM>")
 	s = reSpaces.ReplaceAllString(s, " ")
