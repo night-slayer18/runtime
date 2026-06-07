@@ -160,7 +160,7 @@ func TestCassandraIterator_StreamsRows(t *testing.T) {
 		},
 		pos: -1,
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	var names []string
 	for it.Next() {
@@ -186,7 +186,7 @@ func TestCassandraIterator_ColumnCountMismatch(t *testing.T) {
 		rows:    [][]interface{}{{1, 2}},
 		pos:     -1,
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 	if !it.Next() {
 		t.Fatal("expected a row")
 	}

@@ -25,13 +25,13 @@ func sampleRows() [][]interface{} {
 // false, and Err reports no error for a clean iteration.
 func TestIteratorNextScanErrOrdering(t *testing.T) {
 	ds := NewMemorySource(sampleColumns(), sampleRows())
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select *")
 	if err != nil {
 		t.Fatalf("Query returned error: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	var ids []int
 	var names []string
@@ -75,14 +75,13 @@ func TestIteratorNextScanErrOrdering(t *testing.T) {
 // (Next has not been called yet).
 func TestIteratorScanBeforeNext(t *testing.T) {
 	ds := NewMemorySource(sampleColumns(), sampleRows())
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select *")
 	if err != nil {
 		t.Fatalf("Query returned error: %v", err)
 	}
-	defer it.Close()
-
+	defer func() { _ = it.Close() }()
 	var id int
 	var name string
 	if err := it.Scan(&id, &name); err == nil {
@@ -94,13 +93,13 @@ func TestIteratorScanBeforeNext(t *testing.T) {
 // Next is immediately false, and Err is nil.
 func TestIteratorEmptyResult(t *testing.T) {
 	ds := NewMemorySource(sampleColumns(), nil)
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select *")
 	if err != nil {
 		t.Fatalf("Query returned error: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	count := 0
 	for it.Next() {
@@ -121,13 +120,13 @@ func TestIteratorEmptyResultViaQueryFunc(t *testing.T) {
 		WithQueryFunc(func(query string, rows [][]interface{}) ([][]interface{}, error) {
 			return nil, nil
 		})
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select * where false")
 	if err != nil {
 		t.Fatalf("Query returned error: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	if it.Next() {
 		t.Error("Next returned true for empty filtered result")
@@ -142,13 +141,13 @@ func TestIteratorEmptyResultViaQueryFunc(t *testing.T) {
 // error is surfaced through Err afterwards.
 func TestIteratorScanColumnCountMismatch(t *testing.T) {
 	ds := NewMemorySource(sampleColumns(), sampleRows())
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select *")
 	if err != nil {
 		t.Fatalf("Query returned error: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	if !it.Next() {
 		t.Fatal("Next returned false on first row")
@@ -176,7 +175,7 @@ func TestIteratorScanColumnCountMismatch(t *testing.T) {
 // error and that Scan after Close returns ErrClosed.
 func TestIteratorCloseIdempotent(t *testing.T) {
 	ds := NewMemorySource(sampleColumns(), sampleRows())
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select *")
 	if err != nil {
@@ -235,13 +234,13 @@ func TestSourceErrClosedAfterClose(t *testing.T) {
 // as-is, supporting generic consumers.
 func TestScanWithInterfaceDest(t *testing.T) {
 	ds := NewMemorySource(sampleColumns(), [][]interface{}{{42, "answer"}})
-	defer ds.Close()
+	defer func() { _ = ds.Close() }()
 
 	it, err := ds.Query("select *")
 	if err != nil {
 		t.Fatalf("Query returned error: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	if !it.Next() {
 		t.Fatal("Next returned false on first row")

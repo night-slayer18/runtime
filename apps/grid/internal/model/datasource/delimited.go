@@ -36,7 +36,7 @@ func readDelimited(path string, delim rune) (ds.DataSource, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open %s: %w", path, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	r := csv.NewReader(f)
 	r.Comma = delim

@@ -49,7 +49,7 @@ func Test_GridStartup_LoadsConfigThemeAndImportsCSV(t *testing.T) {
 	if err := m.LoadFile(path); err != nil {
 		t.Fatalf("load csv: %v", err)
 	}
-	defer m.Close()
+	defer func() { _ = m.Close() }()
 
 	if !m.Loaded() {
 		t.Fatal("expected model to report loaded after import")

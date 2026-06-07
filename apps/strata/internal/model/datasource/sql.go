@@ -101,7 +101,7 @@ func (s *sqlSource) Schema() ([]ds.Column, error) {
 	if err != nil {
 		return nil, fmt.Errorf("datasource: schema query: %w", err)
 	}
-	defer rows.Close()
+	defer func() { _ = rows.Close() }()
 
 	types, err := rows.ColumnTypes()
 	if err != nil {

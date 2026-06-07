@@ -130,7 +130,7 @@ func (s *State) RunQuery(query string) (int, error) {
 	if err != nil {
 		return 0, fmt.Errorf("strata: query: %w", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	colCount := len(cols)
 	rows, err := drainRows(it, colCount)

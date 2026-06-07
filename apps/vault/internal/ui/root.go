@@ -114,7 +114,7 @@ func (r Root) bodyContent() string {
 		} else {
 			value = r.styles.Body.Render(value)
 		}
-		b.WriteString(fmt.Sprintf("%s: %s\n", label, value))
+		fmt.Fprintf(&b, "%s: %s\n", label, value)
 	}
 
 	if len(insp.Issues) > 0 {

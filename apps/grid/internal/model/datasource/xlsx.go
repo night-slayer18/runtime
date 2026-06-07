@@ -75,7 +75,7 @@ func readXLSX(path string) (ds.DataSource, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open xlsx %s: %w", path, err)
 	}
-	defer zr.Close()
+	defer func() { _ = zr.Close() }()
 
 	var sheetFile *zip.File
 	var sharedFile *zip.File
@@ -120,7 +120,7 @@ func readSharedStrings(f *zip.File) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open sharedStrings: %w", err)
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 	data, err := io.ReadAll(rc)
 	if err != nil {
 		return nil, fmt.Errorf("read sharedStrings: %w", err)
@@ -142,7 +142,7 @@ func readWorksheet(f *zip.File) (xlsxWorksheet, error) {
 	if err != nil {
 		return xlsxWorksheet{}, fmt.Errorf("open worksheet: %w", err)
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 	data, err := io.ReadAll(rc)
 	if err != nil {
 		return xlsxWorksheet{}, fmt.Errorf("read worksheet: %w", err)

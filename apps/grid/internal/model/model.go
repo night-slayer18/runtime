@@ -140,7 +140,7 @@ func readAllRows(source ds.DataSource, colCount int) ([]table.Row, error) {
 	if err != nil {
 		return nil, fmt.Errorf("query rows: %w", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	var rows []table.Row
 	for it.Next() {
@@ -226,13 +226,13 @@ func (m *GridModel) Export(path string) error {
 	if err != nil {
 		return fmt.Errorf("export: query rows: %w", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	f, err := os.Create(path)
 	if err != nil {
 		return fmt.Errorf("export: create %s: %w", path, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	if err := export.ExportIterator(exporter, f, it, m.columns); err != nil {
 		return fmt.Errorf("export: %w", err)

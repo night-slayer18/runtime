@@ -179,7 +179,7 @@ func TestMongoIterator_StreamsProjectedRows(t *testing.T) {
 		{{Key: "_id", Value: int32(2)}, {Key: "name", Value: "Linus"}}, // age missing
 	}
 	it := newMongoIterator(fields, docs)
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	var rows [][]interface{}
 	for it.Next() {
@@ -211,7 +211,7 @@ func TestMongoIterator_StreamsProjectedRows(t *testing.T) {
 // destination count.
 func TestMongoIterator_ColumnCountMismatch(t *testing.T) {
 	it := newMongoIterator([]string{"a", "b"}, []bson.D{{{Key: "a", Value: 1}, {Key: "b", Value: 2}}})
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 	if !it.Next() {
 		t.Fatal("expected a row")
 	}

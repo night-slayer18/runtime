@@ -31,7 +31,7 @@ func scanAll(t *testing.T, source ds.DataSource) ([]string, [][]string) {
 	if err != nil {
 		t.Fatalf("query: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 	var rows [][]string
 	for it.Next() {
 		dest := make([]interface{}, len(cols))
@@ -67,7 +67,7 @@ func TestOpenCSV(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open csv: %v", err)
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 	names, rows := scanAll(t, source)
 	if len(names) != 2 || names[0] != "a" || names[1] != "b" {
 		t.Fatalf("header = %v", names)
@@ -88,7 +88,7 @@ func TestOpenTSV(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open tsv: %v", err)
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 	names, rows := scanAll(t, source)
 	if names[0] != "x" || names[1] != "y" {
 		t.Fatalf("header = %v", names)
@@ -115,16 +115,16 @@ func TestOpenXLSX_RoundTrip(t *testing.T) {
 		},
 	}
 	if err := (export.XLSXExporter{}).Export(f, dataset); err != nil {
-		f.Close()
+		_ = f.Close()
 		t.Fatalf("export xlsx: %v", err)
 	}
-	f.Close()
+	_ = f.Close()
 
 	source, err := gridds.Open(path)
 	if err != nil {
 		t.Fatalf("open xlsx: %v", err)
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 	names, rows := scanAll(t, source)
 	if len(names) != 2 || names[0] != "id" || names[1] != "name" {
 		t.Fatalf("header = %v", names)
@@ -177,7 +177,7 @@ func TestOpenParquet_RoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("open parquet: %v", err)
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 
 	names, rows := scanAll(t, source)
 	wantNames := []string{"id", "name", "role"}
@@ -234,24 +234,24 @@ func TestOpenArrow_RoundTrip(t *testing.T) {
 	}
 	w, err := ipc.NewFileWriter(f, ipc.WithSchema(schema), ipc.WithAllocator(pool))
 	if err != nil {
-		f.Close()
+		_ = f.Close()
 		t.Fatalf("new arrow writer: %v", err)
 	}
 	if err := w.Write(rec); err != nil {
-		f.Close()
+		_ = f.Close()
 		t.Fatalf("write arrow record: %v", err)
 	}
 	if err := w.Close(); err != nil {
-		f.Close()
+		_ = f.Close()
 		t.Fatalf("close arrow writer: %v", err)
 	}
-	f.Close()
+	_ = f.Close()
 
 	source, err := gridds.Open(path)
 	if err != nil {
 		t.Fatalf("open arrow: %v", err)
 	}
-	defer source.Close()
+	defer func() { _ = source.Close() }()
 
 	names, rows := scanAll(t, source)
 	if len(names) != 2 || names[0] != "id" || names[1] != "name" {

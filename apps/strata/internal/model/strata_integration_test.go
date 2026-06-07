@@ -32,7 +32,7 @@ func TestStrata_SQLiteIntegration(t *testing.T) {
 		}
 		t.Fatalf("connect: %v", err)
 	}
-	defer st.Close()
+	defer func() { _ = st.Close() }()
 
 	// Create a table and seed rows.
 	if _, err := st.Source.Execute(`CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT NOT NULL, active INTEGER)`); err != nil {

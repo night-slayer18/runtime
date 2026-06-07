@@ -111,7 +111,7 @@ func TestXLSXExporterProducesValidZip(t *testing.T) {
 				t.Fatalf("open sheet: %v", err)
 			}
 			data, _ := io.ReadAll(rc)
-			rc.Close()
+			_ = rc.Close()
 			sheet = string(data)
 		}
 	}
@@ -163,13 +163,13 @@ func TestFromIteratorComposesWithDataSource(t *testing.T) {
 		{2, "Grace"},
 	}
 	src := datasource.NewMemorySource(cols, rows)
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 
 	it, err := src.Query("select *")
 	if err != nil {
 		t.Fatalf("query: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	ds, err := FromIterator(it, cols)
 	if err != nil {
@@ -186,13 +186,13 @@ func TestFromIteratorComposesWithDataSource(t *testing.T) {
 func TestExportIteratorEndToEnd(t *testing.T) {
 	cols := []datasource.Column{{Name: "id", Type: "int"}, {Name: "name", Type: "text"}}
 	src := datasource.NewMemorySource(cols, [][]interface{}{{1, "Ada"}})
-	defer src.Close()
+	defer func() { _ = src.Close() }()
 
 	it, err := src.Query("")
 	if err != nil {
 		t.Fatalf("query: %v", err)
 	}
-	defer it.Close()
+	defer func() { _ = it.Close() }()
 
 	var buf bytes.Buffer
 	if err := ExportIterator(CSVExporter{}, &buf, it, cols); err != nil {

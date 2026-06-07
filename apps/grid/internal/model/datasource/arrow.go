@@ -31,13 +31,13 @@ func readArrow(path string) (ds.DataSource, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open arrow %s: %w", path, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	r, err := ipc.NewFileReader(f, ipc.WithAllocator(memory.DefaultAllocator))
 	if err != nil {
 		return nil, fmt.Errorf("parse arrow %s: %w", path, err)
 	}
-	defer r.Close()
+	defer func() { _ = r.Close() }()
 
 	schema := r.Schema()
 	fields := schema.Fields()

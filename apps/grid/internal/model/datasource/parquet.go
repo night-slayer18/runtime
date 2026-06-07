@@ -32,7 +32,7 @@ func readParquet(path string) (ds.DataSource, error) {
 	if err != nil {
 		return nil, fmt.Errorf("open parquet %s: %w", path, err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	info, err := f.Stat()
 	if err != nil {
@@ -59,7 +59,7 @@ func readParquet(path string) (ds.DataSource, error) {
 	}
 
 	reader := parquet.NewReader(pf)
-	defer reader.Close()
+	defer func() { _ = reader.Close() }()
 
 	colCount := len(header)
 	var rows [][]string
