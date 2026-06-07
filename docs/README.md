@@ -1,3 +1,10 @@
+---
+layout: default
+title: Welcome
+nav_order: 1
+permalink: /
+---
+
 # Runtime documentation
 
 Documentation index for the Runtime monorepo. Start with the project [README](../README.md) for an overview and quick start.

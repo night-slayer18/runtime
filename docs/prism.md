@@ -1,3 +1,9 @@
+---
+layout: default
+title: Prism (Documents)
+nav_order: 5
+---
+
 # runtime-prism
 
 Structured document explorer. Prism parses a document into a navigable tree you can expand, collapse, and search by key or value.

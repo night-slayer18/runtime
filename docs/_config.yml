@@ -1,0 +1,14 @@
+# Book settings
+title: "Runtime"
+description: "A family of terminal-native developer tools built with Go and Bubble Tea."
+remote_theme: "just-the-docs/just-the-docs"
+
+# URL configuration (for GitHub Pages hosting)
+url: "https://night-slayer18.github.io"
+baseurl: "/runtime"
+
+# Navigation settings
+nav_sort: "nav_order"
+
+# Theme settings
+color_scheme: "dark"

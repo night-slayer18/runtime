@@ -1,3 +1,9 @@
+---
+layout: default
+title: Versioning & Releases
+nav_order: 9
+---
+
 # Releasing
 
 Every module in the monorepo is versioned and released **independently**. Releasing one app never requires touching another. This guide covers cutting a release with `scripts/version.sh` and what the release pipeline produces.

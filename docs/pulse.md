@@ -1,3 +1,9 @@
+---
+layout: default
+title: Pulse (Logs)
+nav_order: 6
+---
+
 # runtime-pulse
 
 Log exploration and analysis. Pulse tails a log file live, filters lines by pattern, and groups similar messages so you can spot recurring errors.

@@ -1,3 +1,9 @@
+---
+layout: default
+title: Architecture
+nav_order: 2
+---
+
 # Architecture
 
 Runtime is a Go monorepo of independently versioned modules: five applications under `apps/` and eleven shared packages under `packages/`. This document describes how the pieces fit together.

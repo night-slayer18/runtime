@@ -1,3 +1,9 @@
+---
+layout: default
+title: Vault (Secrets)
+nav_order: 8
+---
+
 # runtime-vault
 
 Secrets and configuration explorer. Vault inspects, validates, and decodes secret artifacts, showing only non-sensitive metadata — secret values are always masked.

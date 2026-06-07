@@ -1,3 +1,9 @@
+---
+layout: default
+title: Grid (Tabular)
+nav_order: 4
+---
+
 # runtime-grid
 
 Tabular data workbench. Grid imports a data file into a virtualized table you can navigate and filter entirely from the keyboard.

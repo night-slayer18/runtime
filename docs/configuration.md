@@ -1,3 +1,9 @@
+---
+layout: default
+title: Configuration & Themes
+nav_order: 3
+---
+
 # Configuration
 
 Every Runtime application shares one configuration model, provided by the `packages/config` module. Configuration is per-app, stored as JSON in the platform's standard config directory, and applied on startup. The schema is compatible across all apps, so knowledge transfers between them.

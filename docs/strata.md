@@ -1,3 +1,9 @@
+---
+layout: default
+title: Strata (Database)
+nav_order: 7
+---
+
 # runtime-strata
 
 Database exploration and administration. Strata connects to a database from a single connection string, reads its schema, and renders query results in a virtualized table.
