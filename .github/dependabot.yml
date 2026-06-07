@@ -1,64 +1,60 @@
 version: 2
 
-# Keep Go modules and GitHub Actions up to date. Each Go module has its own
-# go.mod, so each gets its own gomod entry. Each entry groups its updates into
-# a single PR per module (minor/patch together) so a weekly run produces a
-# handful of reviewable PRs rather than one per dependency across 17 modules.
 updates:
   # ---- Applications ----
   - package-ecosystem: gomod
     directory: /apps/grid
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(grid)"
+      prefix: "deps"
     groups:
-      grid:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/prism
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(prism)"
+      prefix: "deps"
     groups:
-      prism:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/pulse
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(pulse)"
+      prefix: "deps"
     groups:
-      pulse:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/strata
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(strata)"
+      prefix: "deps"
     groups:
-      strata:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /apps/vault
     schedule:
       interval: weekly
-    open-pull-requests-limit: 5
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(vault)"
+      prefix: "deps"
     groups:
-      vault:
+      all-go-deps:
         patterns: ["*"]
 
   # ---- Shared packages ----
@@ -66,128 +62,141 @@ updates:
     directory: /packages/tui
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(tui)"
+      prefix: "deps"
     groups:
-      tui:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/theme
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(theme)"
+      prefix: "deps"
     groups:
-      theme:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/config
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(config)"
+      prefix: "deps"
     groups:
-      config:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/table
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(table)"
+      prefix: "deps"
     groups:
-      table:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/tree
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(tree)"
+      prefix: "deps"
     groups:
-      tree:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/search
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(search)"
+      prefix: "deps"
     groups:
-      search:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/plugin
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(plugin)"
+      prefix: "deps"
     groups:
-      plugin:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/datasource
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(datasource)"
+      prefix: "deps"
     groups:
-      datasource:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/export
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(export)"
+      prefix: "deps"
     groups:
-      export:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/schema
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(schema)"
+      prefix: "deps"
     groups:
-      schema:
+      all-go-deps:
         patterns: ["*"]
 
   - package-ecosystem: gomod
     directory: /packages/validation
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(validation)"
+      prefix: "deps"
     groups:
-      validation:
+      all-go-deps:
         patterns: ["*"]
 
-  # ---- Example data generators (own module, also in go.work) ----
+  # ---- Example data generators ----
   - package-ecosystem: gomod
     directory: /examples/_generators
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
-      prefix: "deps(examples)"
+      prefix: "deps"
     groups:
-      examples:
+      all-go-deps:
         patterns: ["*"]
 
-  # ---- GitHub Actions used by the workflows ----
+  # ---- GitHub Actions ----
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
+    open-pull-requests-limit: 1
     commit-message:
       prefix: "ci"
     groups:

@@ -1,17 +1,6 @@
 name: CodeQL
 
-# CodeQL static analysis for Go, in its own workflow so it can be managed
-# independently of the per-module security checks in security.yml.
-#
-# Build mode is "none": CodeQL's Go extractor analyzes the source directly
-# without compiling it. This is the robust choice for this repository because
-# it is a multi-module go.work workspace (the repo root is not a single Go
-# module), so there is no one build command CodeQL could trace. "none" avoids
-# the fragility of manual build tracing across 17 modules.
-#
-# NOTE: If GitHub "default" code scanning is ever enabled for this repo in the
-# Security settings, disable it before relying on this advanced workflow —
-# GitHub rejects an advanced CodeQL workflow while default setup is active.
+
 on:
   push:
     branches: [main]
@@ -20,6 +9,11 @@ on:
   schedule:
     # Mondays at 06:30 UTC (offset from security.yml to spread scheduled load).
     - cron: "30 6 * * 1"
+
+permissions:
+  actions: read
+  contents: read
+  security-events: write
 
 concurrency:
   group: codeql-${{ github.workflow }}-${{ github.ref }}
@@ -34,7 +28,7 @@ jobs:
       security-events: write
       actions: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v3
