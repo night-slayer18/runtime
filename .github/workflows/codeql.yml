@@ -1,6 +1,5 @@
 name: CodeQL
-
-
+# CodeQL static analysis for Go.
 on:
   push:
     branches: [main]
@@ -19,6 +18,9 @@ concurrency:
   group: codeql-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+env:
+  GO_VERSION: "1.25.x"
+
 jobs:
   analyze:
     name: Analyze (Go)
@@ -29,6 +31,11 @@ jobs:
       actions: read
     steps:
       - uses: actions/checkout@v6
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: ${{ env.GO_VERSION }}
+          cache: false
 
       - name: Initialize CodeQL
         uses: github/codeql-action/init@v4
