@@ -15,7 +15,7 @@ require (
 	github.com/runtime-sh/runtime/packages/table v0.0.0
 	github.com/runtime-sh/runtime/packages/theme v0.0.0
 	github.com/runtime-sh/runtime/packages/tui v0.0.0
-	go.mongodb.org/mongo-driver/v2 v2.6.0
+	go.mongodb.org/mongo-driver/v2 v2.7.0
 	modernc.org/sqlite v1.52.0
 )
 
