@@ -76,7 +76,7 @@ jobs:
     if: needs.parse.outputs.kind == 'app'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # full history so the changelog can diff prior tags
 
@@ -153,7 +153,7 @@ jobs:
           cat CHANGELOG.md
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ needs.parse.outputs.app }} ${{ needs.parse.outputs.version }}
           tag_name: ${{ github.ref_name }}
@@ -171,7 +171,7 @@ jobs:
     if: needs.parse.outputs.kind == 'package'
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -200,7 +200,7 @@ jobs:
           cat CHANGELOG.md
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ needs.parse.outputs.module }} ${{ needs.parse.outputs.version }}
           tag_name: ${{ github.ref_name }}
