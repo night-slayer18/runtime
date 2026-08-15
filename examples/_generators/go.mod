@@ -4,7 +4,7 @@ go 1.25.0
 
 require (
 	github.com/apache/arrow-go/v18 v18.7.0
-	github.com/parquet-go/parquet-go v0.30.1
+	github.com/parquet-go/parquet-go v0.32.0
 	github.com/runtime-sh/runtime/packages/export v0.0.0
 	modernc.org/sqlite v1.56.0
 )
