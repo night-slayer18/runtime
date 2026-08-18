@@ -7,7 +7,7 @@ require (
 	github.com/charmbracelet/bubbles v1.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/parquet-go/parquet-go v0.30.1
+	github.com/parquet-go/parquet-go v0.32.0
 	github.com/runtime-sh/runtime/packages/config v0.0.0
 	github.com/runtime-sh/runtime/packages/datasource v0.0.0
 	github.com/runtime-sh/runtime/packages/export v0.0.0
