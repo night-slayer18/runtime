@@ -6,7 +6,7 @@ require (
 	github.com/charmbracelet/bubbles v1.0.0
 	github.com/charmbracelet/bubbletea v1.3.10
 	github.com/charmbracelet/lipgloss v1.1.0
-	github.com/go-sql-driver/mysql v1.10.0
+	github.com/go-sql-driver/mysql v1.10.1
 	github.com/gocql/gocql v1.7.0
 	github.com/lib/pq v1.12.3
 	github.com/runtime-sh/runtime/packages/config v0.0.0-00010101000000-000000000000
@@ -15,8 +15,8 @@ require (
 	github.com/runtime-sh/runtime/packages/table v0.0.0
 	github.com/runtime-sh/runtime/packages/theme v0.0.0
 	github.com/runtime-sh/runtime/packages/tui v0.0.0
-	go.mongodb.org/mongo-driver/v2 v2.8.1
-	modernc.org/sqlite v1.57.0
+	go.mongodb.org/mongo-driver/v2 v2.8.2
+	modernc.org/sqlite v1.58.0
 )
 
 require (
@@ -54,13 +54,13 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	golang.org/x/crypto v0.49.0 // indirect
-	golang.org/x/sync v0.21.0 // indirect
+	golang.org/x/sync v0.22.0 // indirect
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.39.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	modernc.org/libc v1.74.4 // indirect
+	modernc.org/libc v1.75.6 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
-	modernc.org/memory v1.11.0 // indirect
+	modernc.org/memory v1.12.1 // indirect
 )
 
 replace (
