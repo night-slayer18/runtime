@@ -15,8 +15,8 @@ require (
 	github.com/runtime-sh/runtime/packages/table v0.0.0
 	github.com/runtime-sh/runtime/packages/theme v0.0.0
 	github.com/runtime-sh/runtime/packages/tui v0.0.0
-	go.mongodb.org/mongo-driver/v2 v2.9.0
-	modernc.org/sqlite v1.58.0
+	go.mongodb.org/mongo-driver/v2 v2.9.1
+	modernc.org/sqlite v1.59.0
 )
 
 require (
@@ -57,7 +57,7 @@ require (
 	golang.org/x/sys v0.47.0 // indirect
 	golang.org/x/text v0.39.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	modernc.org/libc v1.75.6 // indirect
+	modernc.org/libc v1.75.7 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
 )
