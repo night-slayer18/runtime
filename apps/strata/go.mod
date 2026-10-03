@@ -1,6 +1,6 @@
 module github.com/runtime-sh/runtime/apps/strata
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/charmbracelet/bubbles v1.0.0
@@ -16,7 +16,7 @@ require (
 	github.com/runtime-sh/runtime/packages/theme v0.0.0
 	github.com/runtime-sh/runtime/packages/tui v0.0.0
 	go.mongodb.org/mongo-driver/v2 v2.9.1
-	modernc.org/sqlite v1.59.0
+	modernc.org/sqlite v1.60.1
 )
 
 require (
@@ -53,11 +53,11 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	github.com/youmark/pkcs8 v0.0.0-20240726163527-a2c0da244d78 // indirect
 	golang.org/x/crypto v0.53.0 // indirect
-	golang.org/x/sync v0.22.0 // indirect
-	golang.org/x/sys v0.47.0 // indirect
+	golang.org/x/sync v0.23.0 // indirect
+	golang.org/x/sys v0.48.0 // indirect
 	golang.org/x/text v0.39.0 // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
-	modernc.org/libc v1.75.7 // indirect
+	modernc.org/libc v1.77.1 // indirect
 	modernc.org/mathutil v1.7.1 // indirect
 	modernc.org/memory v1.12.1 // indirect
 )
