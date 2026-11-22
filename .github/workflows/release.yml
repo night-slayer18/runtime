@@ -20,7 +20,7 @@ permissions:
   contents: write
 
 env:
-  GO_VERSION: "1.25.x"
+  GO_VERSION: "1.26.x"
 
 jobs:
   # Parse the pushed tag into kind (app|package), module name, and version.
